@@ -44,7 +44,7 @@ import static org.apache.flink.table.factories.utils.FactoryMocks.createTableSin
 import static org.apache.flink.table.factories.utils.FactoryMocks.createTableSource;
 import static org.junit.Assert.assertEquals;
 
-/** Tests for {@link OggJsonFormatFactory}. */
+/** Tests for {@link OggJsonFormatFactoryLocal}. */
 public class OggJsonFormatFactoryTest extends TestLogger {
     @Rule public ExpectedException thrown = ExpectedException.none();
 

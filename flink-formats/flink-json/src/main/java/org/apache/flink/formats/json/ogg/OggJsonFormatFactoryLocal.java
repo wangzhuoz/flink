@@ -54,7 +54,7 @@ import static org.apache.flink.formats.json.ogg.OggJsonFormatOptions.TIMESTAMP_F
  * DeserializationSchema}.
  */
 @Internal
-public class OggJsonFormatFactory
+public class OggJsonFormatFactoryLocal
         implements DeserializationFormatFactory, SerializationFormatFactory {
 
     public static final String IDENTIFIER = "ogg-json-wzz";

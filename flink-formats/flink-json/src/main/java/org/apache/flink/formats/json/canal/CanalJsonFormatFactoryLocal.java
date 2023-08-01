@@ -56,7 +56,7 @@ import static org.apache.flink.formats.json.canal.CanalJsonFormatOptions.TIMESTA
  * DeserializationSchema}.
  */
 @Internal
-public class CanalJsonFormatFactory
+public class CanalJsonFormatFactoryLocal
         implements DeserializationFormatFactory, SerializationFormatFactory {
 
     public static final String IDENTIFIER = "canal-json-wzz";
@@ -73,7 +73,8 @@ public class CanalJsonFormatFactory
         final TimestampFormat timestampFormat =
                 JsonFormatOptionsUtil.getTimestampFormat(formatOptions);
 
-        return new CanalJsonDecodingFormat(database, table, ignoreParseErrors, timestampFormat);
+        return new CanalJsonDecodingFormatLocal(
+                database, table, ignoreParseErrors, timestampFormat);
     }
 
     @Override

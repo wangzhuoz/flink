@@ -49,7 +49,7 @@ import static org.apache.flink.table.factories.utils.FactoryMocks.createTableSin
 import static org.apache.flink.table.factories.utils.FactoryMocks.createTableSource;
 import static org.junit.Assert.assertEquals;
 
-/** Tests for {@link CanalJsonFormatFactory}. */
+/** Tests for {@link CanalJsonFormatFactoryLocal}. */
 public class CanalJsonFormatFactoryTest extends TestLogger {
     @Rule public ExpectedException thrown = ExpectedException.none();
 
@@ -61,8 +61,8 @@ public class CanalJsonFormatFactoryTest extends TestLogger {
         Map<String, String> options = getAllOptions();
 
         // test Deser
-        CanalJsonDeserializationSchema expectedDeser =
-                CanalJsonDeserializationSchema.builder(
+        CanalJsonDeserializationSchemaLocal expectedDeser =
+                CanalJsonDeserializationSchemaLocal.builder(
                                 PHYSICAL_DATA_TYPE, Collections.emptyList(), ROW_TYPE_INFO)
                         .setIgnoreParseErrors(false)
                         .setTimestampFormat(TimestampFormat.SQL)
@@ -94,8 +94,8 @@ public class CanalJsonFormatFactoryTest extends TestLogger {
         options.put("canal-json.encode.decimal-as-plain-number", "true");
 
         // test Deser
-        CanalJsonDeserializationSchema expectedDeser =
-                CanalJsonDeserializationSchema.builder(
+        CanalJsonDeserializationSchemaLocal expectedDeser =
+                CanalJsonDeserializationSchemaLocal.builder(
                                 PHYSICAL_DATA_TYPE, Collections.emptyList(), ROW_TYPE_INFO)
                         .setIgnoreParseErrors(true)
                         .setTimestampFormat(TimestampFormat.ISO_8601)

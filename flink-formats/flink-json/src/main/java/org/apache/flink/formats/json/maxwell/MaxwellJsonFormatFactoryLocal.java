@@ -54,7 +54,7 @@ import static org.apache.flink.formats.json.maxwell.MaxwellJsonFormatOptions.TIM
  * DeserializationSchema}.
  */
 @Internal
-public class MaxwellJsonFormatFactory
+public class MaxwellJsonFormatFactoryLocal
         implements DeserializationFormatFactory, SerializationFormatFactory {
 
     public static final String IDENTIFIER = "maxwell-json-wzz";

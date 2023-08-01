@@ -14,7 +14,7 @@
 # limitations under the License.
 
 org.apache.flink.formats.json.JsonFormatFactory
-org.apache.flink.formats.json.debezium.DebeziumJsonFormatFactory
-org.apache.flink.formats.json.canal.CanalJsonFormatFactory
-org.apache.flink.formats.json.maxwell.MaxwellJsonFormatFactory
-org.apache.flink.formats.json.ogg.OggJsonFormatFactory
+org.apache.flink.formats.json.debezium.DebeziumJsonFormatFactoryLocal
+org.apache.flink.formats.json.canal.CanalJsonFormatFactoryLocal
+org.apache.flink.formats.json.maxwell.MaxwellJsonFormatFactoryLocal
+org.apache.flink.formats.json.ogg.OggJsonFormatFactoryLocal

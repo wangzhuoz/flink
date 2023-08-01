@@ -56,7 +56,7 @@ import static org.apache.flink.formats.json.debezium.DebeziumJsonFormatOptions.T
  * DeserializationSchema}.
  */
 @Internal
-public class DebeziumJsonFormatFactory
+public class DebeziumJsonFormatFactoryLocal
         implements DeserializationFormatFactory, SerializationFormatFactory {
 
     public static final String IDENTIFIER = "debezium-json-wzz";

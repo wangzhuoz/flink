@@ -58,7 +58,7 @@ import static java.lang.String.format;
  *
  * @see <a href="https://github.com/alibaba/canal">Alibaba Canal</a>
  */
-public final class CanalJsonDeserializationSchema implements DeserializationSchema<RowData> {
+public final class CanalJsonDeserializationSchemaLocal implements DeserializationSchema<RowData> {
     private static final long serialVersionUID = 1L;
 
     private static final String FIELD_OLD = "old";
@@ -100,7 +100,7 @@ public final class CanalJsonDeserializationSchema implements DeserializationSche
     /** Pattern of the specific table. */
     private final Pattern tablePattern;
 
-    private CanalJsonDeserializationSchema(
+    private CanalJsonDeserializationSchemaLocal(
             DataType physicalDataType,
             List<ReadableMetadata> requestedMetadata,
             TypeInformation<RowData> producedTypeInfo,
@@ -136,7 +136,7 @@ public final class CanalJsonDeserializationSchema implements DeserializationSche
     // Builder
     // ------------------------------------------------------------------------------------------
 
-    /** Creates A builder for building a {@link CanalJsonDeserializationSchema}. */
+    /** Creates A builder for building a {@link CanalJsonDeserializationSchemaLocal}. */
     public static Builder builder(
             DataType physicalDataType,
             List<ReadableMetadata> requestedMetadata,
@@ -144,7 +144,7 @@ public final class CanalJsonDeserializationSchema implements DeserializationSche
         return new Builder(physicalDataType, requestedMetadata, producedTypeInfo);
     }
 
-    /** A builder for creating a {@link CanalJsonDeserializationSchema}. */
+    /** A builder for creating a {@link CanalJsonDeserializationSchemaLocal}. */
     @Internal
     public static final class Builder {
         private final DataType physicalDataType;
@@ -184,8 +184,8 @@ public final class CanalJsonDeserializationSchema implements DeserializationSche
             return this;
         }
 
-        public CanalJsonDeserializationSchema build() {
-            return new CanalJsonDeserializationSchema(
+        public CanalJsonDeserializationSchemaLocal build() {
+            return new CanalJsonDeserializationSchemaLocal(
                     physicalDataType,
                     requestedMetadata,
                     producedTypeInfo,
@@ -254,8 +254,9 @@ public final class CanalJsonDeserializationSchema implements DeserializationSche
                         }
                     }
                     before.setRowKind(RowKind.UPDATE_BEFORE);
-                    after.setRowKind(RowKind.UPDATE_AFTER);
-                    emitRow(row, before, out);
+                    //                    after.setRowKind(RowKind.UPDATE_AFTER);
+                    after.setRowKind(RowKind.INSERT);
+                    //                    emitRow(row, before, out);
                     emitRow(row, after, out);
                 }
             } else if (OP_DELETE.equals(type)) {
@@ -264,7 +265,7 @@ public final class CanalJsonDeserializationSchema implements DeserializationSche
                 for (int i = 0; i < data.size(); i++) {
                     GenericRowData insert = (GenericRowData) data.getRow(i, fieldCount);
                     insert.setRowKind(RowKind.DELETE);
-                    emitRow(row, insert, out);
+                    //                    emitRow(row, insert, out);
                 }
             } else if (OP_CREATE.equals(type)) {
                 // "data" field is null and "type" is "CREATE" which means
@@ -326,7 +327,7 @@ public final class CanalJsonDeserializationSchema implements DeserializationSche
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CanalJsonDeserializationSchema that = (CanalJsonDeserializationSchema) o;
+        CanalJsonDeserializationSchemaLocal that = (CanalJsonDeserializationSchemaLocal) o;
         return Objects.equals(jsonDeserializer, that.jsonDeserializer)
                 && hasMetadata == that.hasMetadata
                 && Objects.equals(producedTypeInfo, that.producedTypeInfo)

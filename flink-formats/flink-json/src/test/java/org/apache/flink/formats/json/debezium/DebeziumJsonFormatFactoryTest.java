@@ -51,7 +51,7 @@ import static org.apache.flink.table.factories.utils.FactoryMocks.createTableSou
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-/** Tests for {@link DebeziumJsonFormatFactory}. */
+/** Tests for {@link DebeziumJsonFormatFactoryLocal}. */
 public class DebeziumJsonFormatFactoryTest extends TestLogger {
     @Rule public ExpectedException thrown = ExpectedException.none();
 

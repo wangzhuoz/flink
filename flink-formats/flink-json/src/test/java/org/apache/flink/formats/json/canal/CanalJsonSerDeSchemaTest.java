@@ -20,7 +20,7 @@ package org.apache.flink.formats.json.canal;
 
 import org.apache.flink.formats.common.TimestampFormat;
 import org.apache.flink.formats.json.JsonFormatOptions;
-import org.apache.flink.formats.json.canal.CanalJsonDecodingFormat.ReadableMetadata;
+import org.apache.flink.formats.json.canal.CanalJsonDecodingFormatLocal.ReadableMetadata;
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.data.RowData;
 import org.apache.flink.table.runtime.typeutils.InternalTypeInfo;
@@ -55,7 +55,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-/** Tests for {@link CanalJsonSerializationSchema} and {@link CanalJsonDeserializationSchema}. */
+/**
+ * Tests for {@link CanalJsonSerializationSchema} and {@link CanalJsonDeserializationSchemaLocal}.
+ */
 public class CanalJsonSerDeSchemaTest {
 
     @Rule public ExpectedException thrown = ExpectedException.none();
@@ -70,8 +72,8 @@ public class CanalJsonSerDeSchemaTest {
     @Test
     public void testFilteringTables() throws Exception {
         List<String> lines = readLines("canal-data-filter-table.txt");
-        CanalJsonDeserializationSchema deserializationSchema =
-                CanalJsonDeserializationSchema.builder(
+        CanalJsonDeserializationSchemaLocal deserializationSchema =
+                CanalJsonDeserializationSchemaLocal.builder(
                                 PHYSICAL_DATA_TYPE,
                                 Collections.emptyList(),
                                 InternalTypeInfo.of(PHYSICAL_DATA_TYPE.getLogicalType()))
@@ -84,7 +86,7 @@ public class CanalJsonSerDeSchemaTest {
     @Test
     public void testDeserializeNullRow() throws Exception {
         final List<ReadableMetadata> requestedMetadata = Arrays.asList(ReadableMetadata.values());
-        final CanalJsonDeserializationSchema deserializationSchema =
+        final CanalJsonDeserializationSchemaLocal deserializationSchema =
                 createCanalJsonDeserializationSchema(null, null, requestedMetadata);
         final SimpleCollector collector = new SimpleCollector();
 
@@ -109,7 +111,8 @@ public class CanalJsonSerDeSchemaTest {
                     assertThat(row.getMap(6).size(), equalTo(4));
                     assertThat(row.getArray(7).getString(0).toString(), equalTo("id"));
                     assertThat(row.getTimestamp(8, 3).getMillisecond(), equalTo(1589373515477L));
-                    assertThat(row.getTimestamp(9, 3).getMillisecond(), equalTo(1589373515000L));
+                    assertThat(row.getBoolean(9), equalTo(false));
+                    assertThat(row.getTimestamp(10, 3).getMillisecond(), equalTo(1589373515000L));
                 });
         testDeserializationWithMetadata(
                 "canal-data-filter-table.txt",
@@ -125,15 +128,16 @@ public class CanalJsonSerDeSchemaTest {
                     assertThat(row.getMap(6).size(), equalTo(4));
                     assertThat(row.getArray(7).getString(0).toString(), equalTo("id"));
                     assertThat(row.getTimestamp(8, 3).getMillisecond(), equalTo(1598944146308L));
-                    assertThat(row.getTimestamp(9, 3).getMillisecond(), equalTo(1598944132000L));
+                    assertThat(row.getBoolean(9), equalTo(false));
+                    assertThat(row.getTimestamp(10, 3).getMillisecond(), equalTo(1598944132000L));
                 });
     }
 
     @Test
     public void testSerializationDeserialization() throws Exception {
         List<String> lines = readLines("canal-data.txt");
-        CanalJsonDeserializationSchema deserializationSchema =
-                CanalJsonDeserializationSchema.builder(
+        CanalJsonDeserializationSchemaLocal deserializationSchema =
+                CanalJsonDeserializationSchemaLocal.builder(
                                 PHYSICAL_DATA_TYPE,
                                 Collections.emptyList(),
                                 InternalTypeInfo.of(PHYSICAL_DATA_TYPE.getLogicalType()))
@@ -143,7 +147,8 @@ public class CanalJsonSerDeSchemaTest {
         runTest(lines, deserializationSchema);
     }
 
-    public void runTest(List<String> lines, CanalJsonDeserializationSchema deserializationSchema)
+    public void runTest(
+            List<String> lines, CanalJsonDeserializationSchemaLocal deserializationSchema)
             throws Exception {
         SimpleCollector collector = new SimpleCollector();
         for (String line : lines) {
@@ -266,7 +271,7 @@ public class CanalJsonSerDeSchemaTest {
         // we only read the first line for keeping the test simple
         final String firstLine = readLines(resourceFile).get(0);
         final List<ReadableMetadata> requestedMetadata = Arrays.asList(ReadableMetadata.values());
-        final CanalJsonDeserializationSchema deserializationSchema =
+        final CanalJsonDeserializationSchemaLocal deserializationSchema =
                 createCanalJsonDeserializationSchema(database, table, requestedMetadata);
         final SimpleCollector collector = new SimpleCollector();
 
@@ -275,7 +280,7 @@ public class CanalJsonSerDeSchemaTest {
         testConsumer.accept(collector.list.get(0));
     }
 
-    private CanalJsonDeserializationSchema createCanalJsonDeserializationSchema(
+    private CanalJsonDeserializationSchemaLocal createCanalJsonDeserializationSchema(
             String database, String table, List<ReadableMetadata> requestedMetadata) {
         final DataType producedDataType =
                 DataTypeUtils.appendRowFields(
@@ -283,7 +288,7 @@ public class CanalJsonSerDeSchemaTest {
                         requestedMetadata.stream()
                                 .map(m -> DataTypes.FIELD(m.key, m.dataType))
                                 .collect(Collectors.toList()));
-        return CanalJsonDeserializationSchema.builder(
+        return CanalJsonDeserializationSchemaLocal.builder(
                         PHYSICAL_DATA_TYPE,
                         requestedMetadata,
                         InternalTypeInfo.of(producedDataType.getLogicalType()))

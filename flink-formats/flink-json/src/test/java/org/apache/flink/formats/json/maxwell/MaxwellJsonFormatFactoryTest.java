@@ -49,7 +49,7 @@ import static org.apache.flink.table.factories.utils.FactoryMocks.createTableSin
 import static org.apache.flink.table.factories.utils.FactoryMocks.createTableSource;
 import static org.junit.Assert.assertEquals;
 
-/** Tests for {@link MaxwellJsonFormatFactory}. */
+/** Tests for {@link MaxwellJsonFormatFactoryLocal}. */
 public class MaxwellJsonFormatFactoryTest extends TestLogger {
     @Rule public ExpectedException thrown = ExpectedException.none();
 

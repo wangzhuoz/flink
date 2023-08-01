@@ -21,7 +21,7 @@ package org.apache.flink.formats.json.canal;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.formats.common.TimestampFormat;
-import org.apache.flink.formats.json.canal.CanalJsonDeserializationSchema.MetadataConverter;
+import org.apache.flink.formats.json.canal.CanalJsonDeserializationSchemaLocal.MetadataConverter;
 import org.apache.flink.table.api.DataTypes;
 import org.apache.flink.table.connector.ChangelogMode;
 import org.apache.flink.table.connector.Projection;
@@ -99,7 +99,7 @@ public class CanalJsonDecodingFormatLocal
                 DataTypeUtils.appendRowFields(physicalDataType, metadataFields);
         final TypeInformation<RowData> producedTypeInfo =
                 context.createTypeInformation(producedDataType);
-        return CanalJsonDeserializationSchema.builder(
+        return CanalJsonDeserializationSchemaLocal.builder(
                         physicalDataType, readableMetadata, producedTypeInfo)
                 .setDatabase(database)
                 .setTable(table)
@@ -125,9 +125,9 @@ public class CanalJsonDecodingFormatLocal
     public ChangelogMode getChangelogMode() {
         return ChangelogMode.newBuilder()
                 .addContainedKind(RowKind.INSERT)
-                .addContainedKind(RowKind.UPDATE_BEFORE)
-                .addContainedKind(RowKind.UPDATE_AFTER)
-                .addContainedKind(RowKind.DELETE)
+                //                .addContainedKind(RowKind.UPDATE_BEFORE)
+                //                .addContainedKind(RowKind.UPDATE_AFTER)
+                //                .addContainedKind(RowKind.DELETE)
                 .build();
     }
 
