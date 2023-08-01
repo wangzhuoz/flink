@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /** {@link DecodingFormat} for Canal using JSON encoding. */
-public class CanalJsonDecodingFormat
+public class CanalJsonDecodingFormatLocal
         implements ProjectableDecodingFormat<DeserializationSchema<RowData>> {
 
     // --------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ public class CanalJsonDecodingFormat
 
     private final TimestampFormat timestampFormat;
 
-    public CanalJsonDecodingFormat(
+    public CanalJsonDecodingFormatLocal(
             String database,
             String table,
             boolean ignoreParseErrors,
@@ -204,6 +204,18 @@ public class CanalJsonDecodingFormat
                             return null;
                         }
                         return TimestampData.fromEpochMillis(row.getLong(pos));
+                    }
+                }),
+        BODY_TYPE(
+                "bodytype",
+                DataTypes.STRING().nullable(),
+                DataTypes.FIELD("bodytype", DataTypes.STRING()),
+                new MetadataConverter() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public Object convert(GenericRowData row, int pos) {
+                        return row.getString(2);
                     }
                 }),
 

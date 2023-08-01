@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.apache.flink.formats.json.canal;
+package org.apache.flink.formats.json.maxwell;
 
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
@@ -44,22 +44,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.apache.flink.formats.json.JsonFormatOptions.ENCODE_DECIMAL_AS_PLAIN_NUMBER;
-import static org.apache.flink.formats.json.canal.CanalJsonFormatOptions.DATABASE_INCLUDE;
-import static org.apache.flink.formats.json.canal.CanalJsonFormatOptions.IGNORE_PARSE_ERRORS;
-import static org.apache.flink.formats.json.canal.CanalJsonFormatOptions.JSON_MAP_NULL_KEY_LITERAL;
-import static org.apache.flink.formats.json.canal.CanalJsonFormatOptions.JSON_MAP_NULL_KEY_MODE;
-import static org.apache.flink.formats.json.canal.CanalJsonFormatOptions.TABLE_INCLUDE;
-import static org.apache.flink.formats.json.canal.CanalJsonFormatOptions.TIMESTAMP_FORMAT;
+import static org.apache.flink.formats.json.maxwell.MaxwellJsonFormatOptions.IGNORE_PARSE_ERRORS;
+import static org.apache.flink.formats.json.maxwell.MaxwellJsonFormatOptions.JSON_MAP_NULL_KEY_LITERAL;
+import static org.apache.flink.formats.json.maxwell.MaxwellJsonFormatOptions.JSON_MAP_NULL_KEY_MODE;
+import static org.apache.flink.formats.json.maxwell.MaxwellJsonFormatOptions.TIMESTAMP_FORMAT;
 
 /**
- * Format factory for providing configured instances of Canal JSON to RowData {@link
+ * Format factory for providing configured instances of Maxwell JSON to RowData {@link
  * DeserializationSchema}.
  */
 @Internal
-public class CanalJsonFormatFactory
+public class MaxwellJsonFormatFactory
         implements DeserializationFormatFactory, SerializationFormatFactory {
 
-    public static final String IDENTIFIER = "canal-json";
+    public static final String IDENTIFIER = "maxwell-json-wzz";
 
     @Override
     public DecodingFormat<DeserializationSchema<RowData>> createDecodingFormat(
@@ -67,19 +65,16 @@ public class CanalJsonFormatFactory
         FactoryUtil.validateFactoryOptions(this, formatOptions);
         validateDecodingFormatOptions(formatOptions);
 
-        final String database = formatOptions.getOptional(DATABASE_INCLUDE).orElse(null);
-        final String table = formatOptions.getOptional(TABLE_INCLUDE).orElse(null);
         final boolean ignoreParseErrors = formatOptions.get(IGNORE_PARSE_ERRORS);
         final TimestampFormat timestampFormat =
                 JsonFormatOptionsUtil.getTimestampFormat(formatOptions);
 
-        return new CanalJsonDecodingFormat(database, table, ignoreParseErrors, timestampFormat);
+        return new MaxwellJsonDecodingFormat(ignoreParseErrors, timestampFormat);
     }
 
     @Override
     public EncodingFormat<SerializationSchema<RowData>> createEncodingFormat(
             DynamicTableFactory.Context context, ReadableConfig formatOptions) {
-
         FactoryUtil.validateFactoryOptions(this, formatOptions);
         validateEncodingFormatOptions(formatOptions);
 
@@ -92,6 +87,7 @@ public class CanalJsonFormatFactory
                 formatOptions.get(ENCODE_DECIMAL_AS_PLAIN_NUMBER);
 
         return new EncodingFormat<SerializationSchema<RowData>>() {
+
             @Override
             public ChangelogMode getChangelogMode() {
                 return ChangelogMode.newBuilder()
@@ -106,7 +102,7 @@ public class CanalJsonFormatFactory
             public SerializationSchema<RowData> createRuntimeEncoder(
                     DynamicTableSink.Context context, DataType consumedDataType) {
                 final RowType rowType = (RowType) consumedDataType.getLogicalType();
-                return new CanalJsonSerializationSchema(
+                return new MaxwellJsonSerializationSchema(
                         rowType,
                         timestampFormat,
                         mapNullKeyMode,
@@ -131,20 +127,18 @@ public class CanalJsonFormatFactory
         Set<ConfigOption<?>> options = new HashSet<>();
         options.add(IGNORE_PARSE_ERRORS);
         options.add(TIMESTAMP_FORMAT);
-        options.add(DATABASE_INCLUDE);
-        options.add(TABLE_INCLUDE);
         options.add(JSON_MAP_NULL_KEY_MODE);
         options.add(JSON_MAP_NULL_KEY_LITERAL);
         options.add(ENCODE_DECIMAL_AS_PLAIN_NUMBER);
         return options;
     }
 
-    /** Validator for canal decoding format. */
+    /** Validator for maxwell decoding format. */
     private static void validateDecodingFormatOptions(ReadableConfig tableOptions) {
         JsonFormatOptionsUtil.validateDecodingFormatOptions(tableOptions);
     }
 
-    /** Validator for canal encoding format. */
+    /** Validator for maxwell encoding format. */
     private static void validateEncodingFormatOptions(ReadableConfig tableOptions) {
         JsonFormatOptionsUtil.validateEncodingFormatOptions(tableOptions);
     }
